@@ -14,6 +14,7 @@ class MySqlDiscussionTitleDriver implements DriverInterface
     {
         $discussionIds = Discussion::whereRaw("is_approved = 1 AND title LIKE '%$string%'")
             ->orderBy('id', 'desc')
+            ->limit(50)
             ->lists('id','start_post_id');
 
         $relevantPostIds = [];
@@ -26,6 +27,7 @@ class MySqlDiscussionTitleDriver implements DriverInterface
         $discussionIds = Post::where('type', 'comment')
             ->whereRaw('MATCH (`content`) AGAINST (? IN BOOLEAN MODE)', [$string])
             ->orderByRaw('MATCH (`content`) AGAINST (?) DESC', [$string])
+            ->limit(50)
             ->lists('discussion_id', 'id');
 
         foreach ($discussionIds as $postId => $discussionId) {
