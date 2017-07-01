@@ -1,5 +1,5 @@
 {
-    "name": "ganuonglachanh/flarum-search",
+    "name": "ganuonglachanh/flarum-ext-search",
     "description": "Allows to search by discusstion title",
     "keywords": ["search","flarum"],
     "type": "flarum-extension",
@@ -11,8 +11,8 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/ganuonglachanh/flarum-search/issues",
-        "source": "https://github.com/ganuonglachanh/flarum-search"
+        "issues": "https://github.com/ganuonglachanh/flarum-ganuonglachanh-search/issues",
+        "source": "https://github.com/ganuonglachanh/flarum-ganuonglachanh-search"
     },
     "require": {
         "flarum/core": "^0.1.0-beta.6"
