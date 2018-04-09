@@ -12,8 +12,8 @@ class MySqlDiscussionTitleDriver implements DriverInterface
      */
     public function match($string)
     {
-        $discussionIds = Discussion::whereRaw("is_approved = 1 AND title LIKE '%$string%'")
-            ->orderBy('id', 'desc')
+        $discussionIds = Discussion::where("is_approved", 1)
+            ->where('title', 'like', '%' . $string . '%')
             ->limit(50)
             ->lists('id','start_post_id');
 
