@@ -1,11 +1,10 @@
 <?php
 namespace GaNuongLaChanh\Search\Providers;
 
-use Illuminate\Container\Container;
-use Illuminate\Support\ServiceProvider;
+use Flarum\Foundation\AbstractServiceProvider;
 
 
-class SearchServiceProvider extends ServiceProvider
+class SearchServiceProvider extends AbstractServiceProvider
 {
     static protected $iamcalled = false;
 
@@ -21,14 +20,14 @@ class SearchServiceProvider extends ServiceProvider
         if(static::$iamcalled) { return; }
 
 
-        //$value = new \GaNuongLaChanh\Search\Driver\MySqlDiscussionTitleDriver();
-        $value = $this->app->make('GaNuongLaChanh\Search\Driver\MySqlDiscussionTitleDriver');
-        $this->app->when('GaNuongLaChanh\Search\Gambit\TitleGambit')
-            ->needs('GaNuongLaChanh\Search\Driver\MySqlDiscussionTitleDriver')
-            ->give($value);
-        /*$this->app->singleton('GaNuongLaChanh\Search\Driver\MySqlDiscussionTitleDriver', function ($app) {
+        ////$value = new \GaNuongLaChanh\Search\Driver\MySqlDiscussionTitleDriver();
+        // $value = $this->app->make('GaNuongLaChanh\Search\Driver\MySqlDiscussionTitleDriver');
+        // $this->app->when('GaNuongLaChanh\Search\Gambit\TitleGambit')
+        //     ->needs('GaNuongLaChanh\Search\Driver\MySqlDiscussionTitleDriver')
+        //     ->give($value);
+        $this->app->singleton('GaNuongLaChanh\Search\Driver\MySqlDiscussionTitleDriver', function () {
             return new \GaNuongLaChanh\Search\Driver\MySqlDiscussionTitleDriver();
-        });*/
+        });
 
         static::$iamcalled = true;
     }

@@ -1,11 +1,10 @@
 <?php
 namespace GaNuongLaChanh\Search\Driver;
 
-use Flarum\Core\Post;
-use Flarum\Core\Discussion;
-use Flarum\Core\Search\Discussion\Fulltext\DriverInterface;
+use Flarum\Post\Post;
+use Flarum\Discussion\Discussion;
 
-class MySqlDiscussionTitleDriver implements DriverInterface
+class MySqlDiscussionTitleDriver
 {
     /**
      * {@inheritdoc}
@@ -13,9 +12,12 @@ class MySqlDiscussionTitleDriver implements DriverInterface
     public function match($string)
     {
         $discussionIds = Discussion::where("is_approved", 1)
+            ->where("is_private", 0)
+            ->whereNull('hidden_at')
+            ->where('comment_count', '>', 0)
             ->where('title', 'like', '%' . $string . '%')
-            ->limit(50)
-            ->lists('id','start_post_id');
+            ->limit(20)
+            ->pluck('id','first_post_id');
 
         $relevantPostIds = [];
 
@@ -24,11 +26,14 @@ class MySqlDiscussionTitleDriver implements DriverInterface
         }
 
 
-        $discussionIds = Post::where('type', 'comment')
-            ->whereRaw('MATCH (`content`) AGAINST (? IN BOOLEAN MODE)', [$string])
-            ->orderByRaw('MATCH (`content`) AGAINST (?) DESC', [$string])
-            ->limit(50)
-            ->lists('discussion_id', 'id');
+        $discussionIds = Post::where('type','=', 'comment')
+            ->where("is_approved", 1)
+            ->where("is_private", 0)
+            ->whereNull('hidden_at')
+            ->whereRaw('MATCH (`content`) AGAINST (? IN NATURAL LANGUAGE MODE)', [$string])
+            //->orderByRaw('MATCH (`content`) AGAINST (?) DESC', [$string])
+            ->limit(20)
+            ->pluck('discussion_id', 'id');
 
         foreach ($discussionIds as $postId => $discussionId) {
             $relevantPostIds[$discussionId][] = $postId;

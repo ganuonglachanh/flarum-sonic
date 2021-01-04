@@ -1,10 +1,10 @@
 <?php
 namespace GaNuongLaChanh\Search\Gambit;
 
-use Flarum\Core\Search\AbstractSearch;
-use Flarum\Core\Search\Discussion\DiscussionSearch;
+use Flarum\Search\AbstractSearch;
+use Flarum\Discussion\Search\DiscussionSearch;
 use GaNuongLaChanh\Search\Driver\MySqlDiscussionTitleDriver;
-use Flarum\Core\Search\GambitInterface;
+use Flarum\Search\GambitInterface;
 use LogicException;
 
 class TitleGambit implements GambitInterface
@@ -12,14 +12,14 @@ class TitleGambit implements GambitInterface
     /**
      * @var MySqlDiscussionTitleDriver
      */
-    protected $titletext;
+    protected $titleGambit;
 
     /**
-     * @param MySqlDiscussionTitleDriver $titletext
+     * @param MySqlDiscussionTitleDriver $titleGambit
      */
-    public function __construct(MySqlDiscussionTitleDriver $titletext)
+    public function __construct(MySqlDiscussionTitleDriver $titleGambit)
     {
-        $this->titletext = $titletext;
+        $this->titleGambit = $titleGambit;
     }
 
     /**
@@ -30,10 +30,15 @@ class TitleGambit implements GambitInterface
         if (! $search instanceof DiscussionSearch) {
             throw new LogicException('This gambit can only be applied on a DiscussionSearch');
         }
+        
+        // Replace all non-word characters with spaces.
+        // We do this to prevent MySQL fulltext search boolean mode from taking
+        // effect: https://dev.mysql.com/doc/refman/5.7/en/fulltext-boolean.html
+        $bit = preg_replace('/[^\p{L}\p{N}_]+/u', ' ', $bit);
 
         if (! isset($bit) || strlen($bit)<=3) return $search;
 
-        $relevantPostIds = $this->titletext->match($bit);
+        $relevantPostIds = $this->titleGambit->match($bit);
         $discussionIds = array_keys($relevantPostIds);
         $old_relevantPostIds = $search->getRelevantPostIds();
         $relevantPostIds = array_merge($relevantPostIds, $old_relevantPostIds);

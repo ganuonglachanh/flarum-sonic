@@ -1,13 +1,15 @@
 {
-    "name": "ganuonglachanh/flarum-ext-search",
+    "name": "ganuonglachanh/search",
     "description": "Allows to search by discusstion title",
     "keywords": ["search","flarum"],
     "type": "flarum-extension",
     "license": "MIT",
+    "version": "0.5.0",
     "authors": [
         {
             "name": "GaNuongLaChanh",
-            "email": "ganuonglachanh@outlook.com"
+            "email": "ganuonglachanh@outlook.com",
+            "role": "Developer"
         }
     ],
     "support": {
@@ -15,15 +17,15 @@
         "source": "https://github.com/ganuonglachanh/flarum-ganuonglachanh-search"
     },
     "require": {
-        "flarum/core": "^0.1.0-beta.6"
+        "flarum/core": ">=0.1.0-beta.15"
     },
     "extra": {
         "flarum-extension": {
-            "title": "Search",
+            "title": "Search In Title",
             "icon": {
                 "name": "search",
-                "backgroundColor": "#74000E",
-                "color": "#BE1E31"
+                "backgroundColor": "#1976D2",
+                "color": "#f44336"
             }
         }
     },
