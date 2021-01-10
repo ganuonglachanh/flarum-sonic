@@ -1,4 +1,4 @@
-<?php namespace GaNuongLaChanh\Search;
+<?php namespace GaNuongLaChanh\Sonic;
 
 use Flarum\Extend;
 use Illuminate\Events\Dispatcher;

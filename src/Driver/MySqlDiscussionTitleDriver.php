@@ -1,5 +1,5 @@
 <?php
-namespace GaNuongLaChanh\Search\Driver;
+namespace GaNuongLaChanh\Sonic\Driver;
 
 use Flarum\Post\Post;
 use Flarum\Discussion\Discussion;

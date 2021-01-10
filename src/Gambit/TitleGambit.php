@@ -1,9 +1,9 @@
 <?php
-namespace GaNuongLaChanh\Search\Gambit;
+namespace GaNuongLaChanh\Sonic\Gambit;
 
 use Flarum\Search\AbstractSearch;
 use Flarum\Discussion\Search\DiscussionSearch;
-use GaNuongLaChanh\Search\Driver\MySqlDiscussionTitleDriver;
+use GaNuongLaChanh\Sonic\Driver\MySqlDiscussionTitleDriver;
 use Flarum\Search\GambitInterface;
 use LogicException;
 

@@ -1,2 +1,2 @@
-# flarum-ganuonglachanh-search
-Support search in Discussion Title
+# flarum-sonic
+Support search by Sonic

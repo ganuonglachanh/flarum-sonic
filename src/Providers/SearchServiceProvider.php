@@ -1,5 +1,5 @@
 <?php
-namespace GaNuongLaChanh\Search\Providers;
+namespace GaNuongLaChanh\Sonic\Providers;
 
 use Flarum\Foundation\AbstractServiceProvider;
 
@@ -20,13 +20,13 @@ class SearchServiceProvider extends AbstractServiceProvider
         if(static::$iamcalled) { return; }
 
 
-        ////$value = new \GaNuongLaChanh\Search\Driver\MySqlDiscussionTitleDriver();
-        // $value = $this->app->make('GaNuongLaChanh\Search\Driver\MySqlDiscussionTitleDriver');
-        // $this->app->when('GaNuongLaChanh\Search\Gambit\TitleGambit')
-        //     ->needs('GaNuongLaChanh\Search\Driver\MySqlDiscussionTitleDriver')
+        ////$value = new \GaNuongLaChanh\Sonic\Driver\MySqlDiscussionTitleDriver();
+        // $value = $this->app->make('GaNuongLaChanh\Sonic\Driver\MySqlDiscussionTitleDriver');
+        // $this->app->when('GaNuongLaChanh\Sonic\Gambit\TitleGambit')
+        //     ->needs('GaNuongLaChanh\Sonic\Driver\MySqlDiscussionTitleDriver')
         //     ->give($value);
-        $this->app->singleton('GaNuongLaChanh\Search\Driver\MySqlDiscussionTitleDriver', function () {
-            return new \GaNuongLaChanh\Search\Driver\MySqlDiscussionTitleDriver();
+        $this->app->singleton('GaNuongLaChanh\Sonic\Driver\MySqlDiscussionTitleDriver', function () {
+            return new \GaNuongLaChanh\Sonic\Driver\MySqlDiscussionTitleDriver();
         });
 
         static::$iamcalled = true;

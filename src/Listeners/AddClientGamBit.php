@@ -1,9 +1,9 @@
 <?php
-namespace GaNuongLaChanh\Search\Listeners;
+namespace GaNuongLaChanh\Sonic\Listeners;
 
 use Flarum\Event\ConfigureDiscussionGambits;
 use Illuminate\Contracts\Events\Dispatcher;
-use GaNuongLaChanh\Search\Gambit\TitleGambit;
+use GaNuongLaChanh\Sonic\Gambit\TitleGambit;
 
 class AddClientGamBit
 {
