@@ -17,13 +17,14 @@
         "source": "https://github.com/ganuonglachanh/flarum-sonic"
     },
     "require": {
-        "flarum/core": ">=0.1.0-beta.15"
+        "flarum/core": ">=0.1.0-beta.15",
+        "ppshobi/psonic": "^2.0.1"
     },
     "extra": {
         "flarum-extension": {
             "title": "Search By Sonic",
             "icon": {
-                "name": "search",
+                "name": "fa fa-search",
                 "backgroundColor": "#1976D2",
                 "color": "#f44336"
             }
@@ -31,7 +32,7 @@
     },
     "autoload": {
         "psr-4": {
-            "GaNuongLaChanh\\Search\\": "src/"
+            "GaNuongLaChanh\\Sonic\\": "src/"
         }
     }
 }

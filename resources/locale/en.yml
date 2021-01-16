@@ -1,0 +1,8 @@
+ganuonglachanh-sonic:
+  admin:
+    settings:
+      GNOptionsHeading: Setting
+      host: Host
+      port: Port
+      timeout: TimeOut
+      locale: Locale
