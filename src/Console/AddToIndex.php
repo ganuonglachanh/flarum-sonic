@@ -63,6 +63,6 @@ class AddToIndex extends AbstractCommand
         $ingest->disconnect();
         $control->disconnect();
         //echo json_encode($result);
-        echo "Done!". PHP_EOL;
+        echo "\nDone!". PHP_EOL;
     }
 }

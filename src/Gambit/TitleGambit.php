@@ -1,11 +1,9 @@
 <?php
 namespace GaNuongLaChanh\Sonic\Gambit;
 
-use Flarum\Search\AbstractSearch;
-use Flarum\Discussion\Search\DiscussionSearch;
+use Flarum\Search\SearchState;
 use GaNuongLaChanh\Sonic\Driver\MySqlDiscussionTitleDriver;
 use Flarum\Search\GambitInterface;
-use LogicException;
 
 class TitleGambit implements GambitInterface
 {
@@ -25,12 +23,8 @@ class TitleGambit implements GambitInterface
     /**
      * {@inheritdoc}
      */
-    public function apply(AbstractSearch $search, $bit)
+    public function apply(SearchState $search, $bit)
     {
-        if (! $search instanceof DiscussionSearch) {
-            throw new LogicException('This gambit can only be applied on a DiscussionSearch');
-        }
-        
         // Replace all non-word characters with spaces.
         // We do this to prevent MySQL fulltext search boolean mode from taking
         // effect: https://dev.mysql.com/doc/refman/5.7/en/fulltext-boolean.html
@@ -40,9 +34,6 @@ class TitleGambit implements GambitInterface
 
         $relevantPostIds = $this->titleGambit->match($bit);
         $discussionIds = array_keys($relevantPostIds);
-        $old_relevantPostIds = $search->getRelevantPostIds();
-        $relevantPostIds = array_merge($relevantPostIds, $old_relevantPostIds);
-        $search->setRelevantPostIds($relevantPostIds);
         $search->getQuery()->whereIn('id', $discussionIds);
         $search->setDefaultSort(['id' => $discussionIds]);
     }

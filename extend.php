@@ -1,7 +1,8 @@
 <?php namespace GaNuongLaChanh\Sonic;
 
 use Flarum\Extend;
-use Illuminate\Events\Dispatcher;
+use GaNuongLaChanh\Sonic\Gambit\TitleGambit;
+use Flarum\Discussion\Search\DiscussionSearcher;
 
 return [
     (new Extend\Frontend('forum'))
@@ -9,11 +10,8 @@ return [
     (new Extend\Frontend('admin'))
         ->js(__DIR__ . '/js/dist/admin.js'),
     (new Extend\Locales(__DIR__ . '/resources/locale')),
-    (new Extend\ServiceProvider())
-        ->register(Providers\SearchServiceProvider::class)
-    ,    
+    (new Extend\SimpleFlarumSearch(DiscussionSearcher::class))
+        ->setFullTextGambit(TitleGambit::class)
+    ,
     (new Extend\Console())->command(\GaNuongLaChanh\Sonic\Console\AddToIndex::class),
-    function(Dispatcher $events) {        
-        $events->subscribe(Listeners\AddClientGamBit::class);
-    }
 ];
