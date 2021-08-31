@@ -1,5 +1,5 @@
 js/node_modules
-js/dist
+js/dist/*.map
 vendor
 composer.lock
 .DS_Store
