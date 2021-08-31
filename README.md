@@ -1,5 +1,5 @@
 # flarum-sonic
-Support search by Sonic
+Support search by [Sonic](https://github.com/valeriansaliou/sonic)
 
 1) Install the extension:
 
