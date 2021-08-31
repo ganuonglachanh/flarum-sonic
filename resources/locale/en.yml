@@ -4,5 +4,6 @@ ganuonglachanh-sonic:
       GNOptionsHeading: Setting
       host: Host
       port: Port
+      password: Password
       timeout: TimeOut
       locale: Locale

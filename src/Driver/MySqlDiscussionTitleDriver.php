@@ -33,14 +33,18 @@ class MySqlDiscussionTitleDriver
         
         // 2) Then serch in post body by sonic
         $locale = $this->settings->get('ganuonglachanh-sonic.locale','eng');
+        $password = $this->settings->get('ganuonglachanh-sonic.password','SecretPassword');
+        $host = $this->settings->get('ganuonglachanh-sonic.host','127.0.0.1');
+        $port = intval($this->settings->get('ganuonglachanh-sonic.port',1491));
+        $timeout = intval($this->settings->get('ganuonglachanh-sonic.timeout',30));
         //echo $string .PHP_EOL;
-        $search = new \Psonic\Search(new \Psonic\Client('sonic', 1491, 30));
-        $search->connect('SecretPassword');
+        $search = new \Psonic\Search(new \Psonic\Client($host, $port, $timeout));
+        $search->connect($password);
         $res = $search->query('postCollection', 'flarumBucket', $string, 20, 0, $locale);
         // you should be getting an array of object keys which matched with the term $string
         $search->disconnect();
         
-        if (is_array($res)) {
+        if (is_array($res) && count($res) > 0) {
             //var_dump($res);
             //$discussionIds = Post::select('id','discussion_id')
             $discussionIds = Post::where('type','=', 'comment')

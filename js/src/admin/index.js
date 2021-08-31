@@ -15,6 +15,12 @@ app.initializers.add('ganuonglachanh-sonic', () => {
       placeholder: '1491'
     })
     .registerSetting({
+      setting: 'ganuonglachanh-sonic.password',
+      label: app.translator.trans('ganuonglachanh-sonic.admin.settings.password'),
+      type: 'text',
+      placeholder: 'SecretPassword'
+    })
+    .registerSetting({
       setting: 'ganuonglachanh-sonic.timeout',
       label: app.translator.trans('ganuonglachanh-sonic.admin.settings.timeout'),
       type: 'number',
