@@ -10,5 +10,5 @@ composer require ganuonglachanh/sonic
 2) Then create index by this command:
 
 ```
-php flarum sonic addtoindex
+php flarum sonic:addtoindex
 ```
