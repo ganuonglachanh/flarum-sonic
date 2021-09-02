@@ -35,11 +35,11 @@ class MySqlDiscussionTitleDriver
         $locale = $this->settings->get('ganuonglachanh-sonic.locale','eng');
         $locale = $locale === '' ? 'eng' : $locale;
         $password = $this->settings->get('ganuonglachanh-sonic.password','SecretPassword');
-        $password = $password === '' ? 'SecretPassword' : $locale;
+        $password = $password === '' ? 'SecretPassword' : $password;
         $host = $this->settings->get('ganuonglachanh-sonic.host','127.0.0.1');
         $host = $host === '' ? '127.0.0.1' : $host;
         $port = intval($this->settings->get('ganuonglachanh-sonic.port',1491));
-        $port = $port === 0 ? 1491 : $host;
+        $port = $port === 0 ? 1491 : $port;
         $timeout = intval($this->settings->get('ganuonglachanh-sonic.timeout',30));
         $timeout = $timeout === 0 ? 30 : $timeout;
         //echo $string .PHP_EOL;

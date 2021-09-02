@@ -39,18 +39,18 @@ class AddToIndex extends AbstractCommand
         $locale = $this->settings->get('ganuonglachanh-sonic.locale','eng');
         $locale = $locale === '' ? 'eng' : $locale;
         $password = $this->settings->get('ganuonglachanh-sonic.password','SecretPassword');
-        $password = $password === '' ? 'SecretPassword' : $locale;
+        $password = $password === '' ? 'SecretPassword' : $password;
         $host = $this->settings->get('ganuonglachanh-sonic.host','127.0.0.1');
         $host = $host === '' ? '127.0.0.1' : $host;
         $port = intval($this->settings->get('ganuonglachanh-sonic.port',1491));
-        $port = $port === 0 ? 1491 : $host;
+        $port = $port === 0 ? 1491 : $port;
         $timeout = intval($this->settings->get('ganuonglachanh-sonic.timeout',30));
         $timeout = $timeout === 0 ? 30 : $timeout;
         //https://github.com/ppshobi/psonic/blob/master/api-docs.md
         $ingest  = new \Psonic\Ingest(new \Psonic\Client($host, $port, $timeout));
         $control = new \Psonic\Control(new \Psonic\Client($host, $port, $timeout));
-        $ingest->connect('SecretPassword');
-        $control->connect('SecretPassword');
+        $ingest->connect($password);
+        $control->connect($password);
         echo 'Flush old postCollection: ' . $ingest->flushc('postCollection') . PHP_EOL;
         echo "Adding to index...". PHP_EOL;
         Post::select('id','content')
