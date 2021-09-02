@@ -36,10 +36,16 @@ class AddToIndex extends AbstractCommand
 
         //$config = $this->container->make('flarum.config');
         //$prefix = $config['database']['prefix'];
-        $host = $this->settings->get('ganuonglachanh-sonic.host','sonic');
-        $port = (int) $this->settings->get('ganuonglachanh-sonic.port', 1491);
-        $timeout = (int) $this->settings->get('ganuonglachanh-sonic.timeout', 30);
         $locale = $this->settings->get('ganuonglachanh-sonic.locale','eng');
+        $locale = $locale === '' ? 'eng' : $locale;
+        $password = $this->settings->get('ganuonglachanh-sonic.password','SecretPassword');
+        $password = $password === '' ? 'SecretPassword' : $locale;
+        $host = $this->settings->get('ganuonglachanh-sonic.host','127.0.0.1');
+        $host = $host === '' ? '127.0.0.1' : $host;
+        $port = intval($this->settings->get('ganuonglachanh-sonic.port',1491));
+        $port = $port === 0 ? 1491 : $host;
+        $timeout = intval($this->settings->get('ganuonglachanh-sonic.timeout',30));
+        $timeout = $timeout === 0 ? 30 : $timeout;
         //https://github.com/ppshobi/psonic/blob/master/api-docs.md
         $ingest  = new \Psonic\Ingest(new \Psonic\Client($host, $port, $timeout));
         $control = new \Psonic\Control(new \Psonic\Client($host, $port, $timeout));
