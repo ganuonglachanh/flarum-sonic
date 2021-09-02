@@ -33,10 +33,15 @@ class MySqlDiscussionTitleDriver
         
         // 2) Then serch in post body by sonic
         $locale = $this->settings->get('ganuonglachanh-sonic.locale','eng');
+        $locale = $locale === '' ? 'eng' : $locale;
         $password = $this->settings->get('ganuonglachanh-sonic.password','SecretPassword');
+        $password = $password === '' ? 'SecretPassword' : $locale;
         $host = $this->settings->get('ganuonglachanh-sonic.host','127.0.0.1');
+        $host = $host === '' ? '127.0.0.1' : $host;
         $port = intval($this->settings->get('ganuonglachanh-sonic.port',1491));
+        $port = $port === 0 ? 1491 : $host;
         $timeout = intval($this->settings->get('ganuonglachanh-sonic.timeout',30));
+        $timeout = $timeout === 0 ? 30 : $timeout;
         //echo $string .PHP_EOL;
         $search = new \Psonic\Search(new \Psonic\Client($host, $port, $timeout));
         $search->connect($password);
