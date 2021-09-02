@@ -49,8 +49,14 @@ class AddToIndex extends AbstractCommand
         //https://github.com/ppshobi/psonic/blob/master/api-docs.md
         $ingest  = new \Psonic\Ingest(new \Psonic\Client($host, $port, $timeout));
         $control = new \Psonic\Control(new \Psonic\Client($host, $port, $timeout));
-        $ingest->connect($password);
-        $control->connect($password);
+        try {
+            $ingest->connect($password);
+            $control->connect($password);
+        } catch (\Throwable $th) {
+            echo "\nInvalid sonic server detail!". PHP_EOL;
+            return;
+        }
+        
         echo 'Flush old postCollection: ' . $ingest->flushc('postCollection') . PHP_EOL;
         echo "Adding to index...". PHP_EOL;
         Post::select('id','content')

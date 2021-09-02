@@ -17,7 +17,7 @@ class SonicEventSubscriber
         $locale = $this->settings->get('ganuonglachanh-sonic.locale','eng');
         $this->locale = $locale === '' ? 'eng' : $locale;
         $password = $this->settings->get('ganuonglachanh-sonic.password','SecretPassword');
-        $password = $password === '' ? 'SecretPassword' : $password;
+        $this->password = $password === '' ? 'SecretPassword' : $password;
         $host = $this->settings->get('ganuonglachanh-sonic.host','127.0.0.1');
         $host = $host === '' ? '127.0.0.1' : $host;
         $port = intval($this->settings->get('ganuonglachanh-sonic.port',1491));
@@ -26,14 +26,6 @@ class SonicEventSubscriber
         $timeout = $timeout === 0 ? 30 : $timeout;
         $this->ingest  = new \Psonic\Ingest(new \Psonic\Client($host, $port, $timeout));
         $this->control = new \Psonic\Control(new \Psonic\Client($host, $port, $timeout));
-        $this->ingest->connect($password);
-        $this->control->connect($password);
-    }
-
-    function __destruct() {
-        $this->control->consolidate(); // saves the data to disk
-        $this->ingest->disconnect();
-        $this->control->disconnect();
     }
 
     /**
@@ -51,33 +43,63 @@ class SonicEventSubscriber
     function posted(Posted $event)
     {
         if ($event->post->type === "comment") {
-            $this->ingest->push('postCollection', 'flarumBucket', $event->post->id,$event->post->content, $this->locale);
+            try {
+                $this->ingest->connect($this->password);
+                $this->ingest->push('postCollection', 'flarumBucket', $event->post->id,$event->post->content, $this->locale);
+                $this->ingest->disconnect();
+            } catch (\Throwable $th) {
+
+            }
         }
     }
 
     function revised(Revised $event)
     {
         if ($event->post->type === "comment") {
-            //$this->ingest->pop('postCollection', 'flarumBucket', $event->post->id,$event->post->content);
-            $this->ingest->push('postCollection', 'flarumBucket', $event->post->id,$event->post->content, $this->locale);
+            try {
+                $this->ingest->connect($this->password);
+                //$this->ingest->pop('postCollection', 'flarumBucket', $event->post->id,$event->post->content);
+                $this->ingest->push('postCollection', 'flarumBucket', $event->post->id,$event->post->content, $this->locale);
+                $this->ingest->disconnect();
+            } catch (\Throwable $th) {
+                
+            }
         }
     }
 
     function hidden(Hidden $event) {
         if ($event->post->type === "comment") {
-            $this->ingest->pop('postCollection', 'flarumBucket', $event->post->id,$event->post->content);
+            try {
+                $this->ingest->connect($this->password);
+                $this->ingest->pop('postCollection', 'flarumBucket', $event->post->id,$event->post->content);
+                $this->ingest->disconnect();
+            } catch (\Throwable $th) {
+
+            }
         }
     }
 
     function deleted(Deleted $event) {
         if ($event->post->type === "comment") {
-            $this->ingest->pop('postCollection', 'flarumBucket', $event->post->id,$event->post->content);
+            try {
+                $this->ingest->connect($this->password);
+                $this->ingest->pop('postCollection', 'flarumBucket', $event->post->id,$event->post->content);
+                $this->ingest->disconnect();
+            } catch (\Throwable $th) {
+
+            }
         }
     }
 
     function restored(Restored $event) {
         if ($event->post->type === "comment") {
-            $this->ingest->push('postCollection', 'flarumBucket', $event->post->id,$event->post->content, $this->locale);
+            try {
+                $this->ingest->connect($this->password);
+                $this->ingest->push('postCollection', 'flarumBucket', $event->post->id,$event->post->content, $this->locale);
+                $this->ingest->disconnect();
+            } catch (\Throwable $th) {
+
+            }
         }
     }
 }
