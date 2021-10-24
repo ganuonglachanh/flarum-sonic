@@ -3,7 +3,7 @@
     "description": "Allows to search by sonic",
     "keywords": ["search","flarum","sonic"],
     "type": "flarum-extension",
-    "license": "MIT",
+    "license": "AGPL-3.0",
     "version": "0.1.5",
     "authors": [
         {
