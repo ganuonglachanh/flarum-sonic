@@ -111,7 +111,6 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports) {
 
 app.initializers.add('ganuonglachanh/sonic', function () {
-  console.log('[ganuonglachanh/sonic] Hello, forum!');
 });
 
 /***/ })
