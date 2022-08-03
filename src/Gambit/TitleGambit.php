@@ -32,7 +32,7 @@ class TitleGambit implements GambitInterface
         // effect: https://dev.mysql.com/doc/refman/5.7/en/fulltext-boolean.html
         $bit = preg_replace('/[^\p{L}\p{N}_]+/u', ' ', $bit);
 
-        if (! isset($bit) || strlen($bit)<=3) return $search;
+        if (! isset($bit) ) return $search;
 
         $query = $search->getQuery();
         $grammar = $query->getGrammar();
