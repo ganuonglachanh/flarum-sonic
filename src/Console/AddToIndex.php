@@ -66,7 +66,8 @@ class AddToIndex extends AbstractCommand
             ->where('type', '=', 'comment')
             ->where('is_approved', 1)
             ->where('is_private', 0)
-            ->whereNull('hidden_at')->get();
+            ->whereNull('hidden_at')
+            ->get();
         $progress = new ProgressBar($this->output, $posts->count());
         $progress->setFormat('verbose');
         foreach ($posts as $post) {
@@ -74,7 +75,8 @@ class AddToIndex extends AbstractCommand
             try {
                 $ingest->push('postCollection', 'flarumBucket', $post->id, strip_tags($post->content), $locale);
             } catch (\Throwable $e) {
-                $this->error("{$post->id} with " . strlen(strip_tags($post->content)) . ' bytes of content failed after ' . round((microtime(true) - $start) * 1000, 2) . 'ms' . PHP_EOL);
+                $this->info(PHP_EOL);
+                $this->error("Post id {$post->id} with " . strlen(strip_tags($post->content)) . ' bytes of content failed after ' . round((microtime(true) - $start) * 1000, 2) . 'ms');
             } finally {
                 $progress->advance();
             }
