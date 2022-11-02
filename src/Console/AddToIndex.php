@@ -1,9 +1,11 @@
 <?php 
 namespace GaNuongLaChanh\Sonic\Console;
+
 use Flarum\Console\AbstractCommand;
 use Illuminate\Contracts\Container\Container;
 use Flarum\Post\Post;
 use Flarum\Settings\SettingsRepositoryInterface;
+use Psonic;
 
 class AddToIndex extends AbstractCommand
 {
@@ -47,8 +49,8 @@ class AddToIndex extends AbstractCommand
         $timeout = intval($this->settings->get('ganuonglachanh-sonic.timeout',30));
         $timeout = $timeout === 0 ? 30 : $timeout;
         //https://github.com/ppshobi/psonic/blob/master/api-docs.md
-        $ingest  = new \Psonic\Ingest(new \Psonic\Client($host, $port, $timeout));
-        $control = new \Psonic\Control(new \Psonic\Client($host, $port, $timeout));
+        $ingest  = new Ingest(new Client($host, $port, $timeout));
+        $control = new Control(new Client($host, $port, $timeout));
         try {
             $ingest->connect($password);
             $control->connect($password);
@@ -60,17 +62,19 @@ class AddToIndex extends AbstractCommand
         echo 'Flush old postCollection: ' . $ingest->flushc('postCollection') . PHP_EOL;
         echo "Adding to index...". PHP_EOL;
         Post::select('id','content')
-        ->where('type','=', 'comment')
-        ->where('is_approved', 1)
-        ->where('is_private', 0)
-        ->whereNull('hidden_at')
-        ->chunk(200, function ($posts) use ($ingest, $locale) {
-            foreach ($posts as $post) {
-                //echo json_encode($post->content); exit(0);
-                //echo $ingest->push('postCollection', 'flarumBucket', $post->id,$post->content)->getStatus(); // OK
-                $ingest->push('postCollection', 'flarumBucket', $post->id,$post->content, $locale);
-            }
-        });
+            ->where('type','=', 'comment')
+            ->where('is_approved', 1)
+            ->where('is_private', 0)
+            ->whereNull('hidden_at')
+            ->chunk(200, function ($posts) use ($ingest, $locale) {
+                foreach ($posts as $post) {
+                    try {
+                        $ingest->push('postCollection', 'flarumBucket', $post->id, strip_tags($post->content), $locale);
+                    } catch (\Throwable $th) {
+                        echo "{$post->id} with " . strip_tags($post->content) . ' bytes of content failed after' . round((microtime(true) - $start) * 1000, 2) . 'ms' . PHP_EOL;
+                    }
+                }
+            });
         echo $control->consolidate(); // saves the data to disk
         $ingest->disconnect();
         $control->disconnect();
