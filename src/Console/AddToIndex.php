@@ -1,11 +1,14 @@
 <?php 
 namespace GaNuongLaChanh\Sonic\Console;
 
-use Flarum\Console\AbstractCommand;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Illuminate\Contracts\Container\Container;
+use Flarum\Console\AbstractCommand;
 use Flarum\Post\Post;
 use Flarum\Settings\SettingsRepositoryInterface;
-use Psonic;
+use Psonic\Ingest;
+use Psonic\Control;
+use Psonic\Client;
 
 class AddToIndex extends AbstractCommand
 {
@@ -59,20 +62,22 @@ class AddToIndex extends AbstractCommand
         
         $this->info('Flush old postCollection: ' . $ingest->flushc('postCollection'));
         $this->info('Adding to index...');
-        $this->withProgressBar(
-            Post::select('id', 'content')
-                ->where('type', '=', 'comment')
-                ->where('is_approved', 1)
-                ->where('is_private', 0)
-                ->whereNull('hidden_at'),
-            function ($post) use ($ingest, $locale) {
-                try {
-                    $ingest->push('postCollection', 'flarumBucket', $post->id, strip_tags($post->content), $locale);
-                } catch (\Throwable $e) {
-                    $this->error("{$post->id} with " . strip_tags($post->content) . ' bytes of content failed after' . round((microtime(true) - $start) * 1000, 2) . 'ms' . PHP_EOL);
-                }
+        $posts = Post::select('id', 'content')
+            ->where('type', '=', 'comment')
+            ->where('is_approved', 1)
+            ->where('is_private', 0)
+            ->whereNull('hidden_at')->get();
+        $progress = new ProgressBar($this->output, $posts->count());
+        $progress->setFormat('verbose');
+        foreach ($posts as $post) {
+            try {
+                $ingest->push('postCollection', 'flarumBucket', $post->id, strip_tags($post->content), $locale);
+            } catch (\Throwable $e) {
+                $this->error("{$post->id} with " . strip_tags($post->content) . ' bytes of content failed after' . round((microtime(true) - $start) * 1000, 2) . 'ms' . PHP_EOL);
+            } finally {
+                $progress->advance();
             }
-        );
+        }
         $this->info($control->consolidate()); // saves the data to disk
         $ingest->disconnect();
         $control->disconnect();
