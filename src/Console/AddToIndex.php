@@ -72,14 +72,16 @@ class AddToIndex extends AbstractCommand
         $progress->setFormat('verbose');
         foreach ($posts as $post) {
             $start = microtime(true);
-            try {
-                $ingest->push('postCollection', 'flarumBucket', $post->id, strip_tags($post->content), $locale);
-            } catch (\Throwable $e) {
-                $this->info(PHP_EOL);
-                $this->error("Post id {$post->id} with " . strlen(strip_tags($post->content)) . ' bytes of content failed after ' . round((microtime(true) - $start) * 1000, 2) . 'ms');
-            } finally {
-                $progress->advance();
+            $content = strip_tags($post->content);
+            if (trim($content) !== '') {
+                try {
+                    $ingest->push('postCollection', 'flarumBucket', $post->id, $content, $locale);
+                } catch (\Throwable $e) {
+                    $this->info(PHP_EOL);
+                    $this->error("Post id {$post->id} with " . strlen($content) . ' bytes of content failed after ' . round((microtime(true) - $start) * 1000, 2) . 'ms');
+                }
             }
+            $progress->advance();
         }
         $this->info($control->consolidate()); // saves the data to disk
         $ingest->disconnect();
