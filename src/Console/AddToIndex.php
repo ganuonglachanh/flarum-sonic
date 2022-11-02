@@ -70,10 +70,11 @@ class AddToIndex extends AbstractCommand
         $progress = new ProgressBar($this->output, $posts->count());
         $progress->setFormat('verbose');
         foreach ($posts as $post) {
+            $start = microtime(true);
             try {
                 $ingest->push('postCollection', 'flarumBucket', $post->id, strip_tags($post->content), $locale);
             } catch (\Throwable $e) {
-                $this->error("{$post->id} with " . strip_tags($post->content) . ' bytes of content failed after' . round((microtime(true) - $start) * 1000, 2) . 'ms' . PHP_EOL);
+                $this->error("{$post->id} with " . strlen(strip_tags($post->content)) . ' bytes of content failed after ' . round((microtime(true) - $start) * 1000, 2) . 'ms' . PHP_EOL);
             } finally {
                 $progress->advance();
             }
