@@ -1,9 +1,14 @@
 <?php 
 namespace GaNuongLaChanh\Sonic\Console;
-use Flarum\Console\AbstractCommand;
+
+use Symfony\Component\Console\Helper\ProgressBar;
 use Illuminate\Contracts\Container\Container;
+use Flarum\Console\AbstractCommand;
 use Flarum\Post\Post;
 use Flarum\Settings\SettingsRepositoryInterface;
+use Psonic\Ingest;
+use Psonic\Control;
+use Psonic\Client;
 
 class AddToIndex extends AbstractCommand
 {
@@ -34,47 +39,53 @@ class AddToIndex extends AbstractCommand
     {
         $this->info('Starting...');
 
-        //$config = $this->container->make('flarum.config');
-        //$prefix = $config['database']['prefix'];
-        $locale = $this->settings->get('ganuonglachanh-sonic.locale','eng');
+        $locale = $this->settings->get('ganuonglachanh-sonic.locale', 'eng');
         $locale = $locale === '' ? 'eng' : $locale;
-        $password = $this->settings->get('ganuonglachanh-sonic.password','SecretPassword');
+        $password = $this->settings->get('ganuonglachanh-sonic.password', 'SecretPassword');
         $password = $password === '' ? 'SecretPassword' : $password;
-        $host = $this->settings->get('ganuonglachanh-sonic.host','127.0.0.1');
+        $host = $this->settings->get('ganuonglachanh-sonic.host', '127.0.0.1');
         $host = $host === '' ? '127.0.0.1' : $host;
-        $port = intval($this->settings->get('ganuonglachanh-sonic.port',1491));
+        $port = intval($this->settings->get('ganuonglachanh-sonic.port', 1491));
         $port = $port === 0 ? 1491 : $port;
-        $timeout = intval($this->settings->get('ganuonglachanh-sonic.timeout',30));
+        $timeout = intval($this->settings->get('ganuonglachanh-sonic.timeout', 30));
         $timeout = $timeout === 0 ? 30 : $timeout;
-        //https://github.com/ppshobi/psonic/blob/master/api-docs.md
-        $ingest  = new \Psonic\Ingest(new \Psonic\Client($host, $port, $timeout));
-        $control = new \Psonic\Control(new \Psonic\Client($host, $port, $timeout));
+        // https://github.com/ppshobi/psonic/blob/master/api-docs.md
+        $ingest = new Ingest(new Client($host, $port, $timeout));
+        $control = new Control(new Client($host, $port, $timeout));
         try {
             $ingest->connect($password);
             $control->connect($password);
-        } catch (\Throwable $th) {
-            echo "\nInvalid sonic server detail!". PHP_EOL;
+        } catch (\Throwable $e) {
+            $this->error('Invalid sonic server detail!');
             return;
         }
         
-        echo 'Flush old postCollection: ' . $ingest->flushc('postCollection') . PHP_EOL;
-        echo "Adding to index...". PHP_EOL;
-        Post::select('id','content')
-        ->where('type','=', 'comment')
-        ->where('is_approved', 1)
-        ->where('is_private', 0)
-        ->whereNull('hidden_at')
-        ->chunk(200, function ($posts) use ($ingest, $locale) {
-            foreach ($posts as $post) {
-                //echo json_encode($post->content); exit(0);
-                //echo $ingest->push('postCollection', 'flarumBucket', $post->id,$post->content)->getStatus(); // OK
-                $ingest->push('postCollection', 'flarumBucket', $post->id,$post->content, $locale);
+        $this->info('Flush old postCollection: ' . $ingest->flushc('postCollection'));
+        $this->info('Adding to index...');
+        $posts = Post::select('id', 'content')
+            ->where('type', '=', 'comment')
+            ->where('is_approved', 1)
+            ->where('is_private', 0)
+            ->whereNull('hidden_at')
+            ->get();
+        $progress = new ProgressBar($this->output, $posts->count());
+        $progress->setFormat('verbose');
+        foreach ($posts as $post) {
+            $start = microtime(true);
+            $content = strip_tags($post->content);
+            if (trim($content) !== '') {
+                try {
+                    $ingest->push('postCollection', 'flarumBucket', $post->id, $content, $locale);
+                } catch (\Throwable $e) {
+                    $this->info(PHP_EOL);
+                    $this->error("Post id {$post->id} with " . strlen($content) . ' bytes of content failed after ' . round((microtime(true) - $start) * 1000, 2) . 'ms');
+                }
             }
-        });
-        echo $control->consolidate(); // saves the data to disk
+            $progress->advance();
+        }
+        $this->info($control->consolidate()); // saves the data to disk
         $ingest->disconnect();
         $control->disconnect();
-        //echo json_encode($result);
-        echo "\nDone!". PHP_EOL;
+        $this->info('Done!');
     }
 }

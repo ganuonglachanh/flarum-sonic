@@ -14,15 +14,15 @@ class SonicEventSubscriber
     public function __construct(SettingsRepositoryInterface $settings)
     {
         $this->settings = $settings;
-        $locale = $this->settings->get('ganuonglachanh-sonic.locale','eng');
+        $locale = $this->settings->get('ganuonglachanh-sonic.locale', 'eng');
         $this->locale = $locale === '' ? 'eng' : $locale;
-        $password = $this->settings->get('ganuonglachanh-sonic.password','SecretPassword');
+        $password = $this->settings->get('ganuonglachanh-sonic.password', 'SecretPassword');
         $this->password = $password === '' ? 'SecretPassword' : $password;
-        $host = $this->settings->get('ganuonglachanh-sonic.host','127.0.0.1');
+        $host = $this->settings->get('ganuonglachanh-sonic.host', '127.0.0.1');
         $host = $host === '' ? '127.0.0.1' : $host;
-        $port = intval($this->settings->get('ganuonglachanh-sonic.port',1491));
+        $port = intval($this->settings->get('ganuonglachanh-sonic.port', 1491));
         $port = $port === 0 ? 1491 : $port;
-        $timeout = intval($this->settings->get('ganuonglachanh-sonic.timeout',30));
+        $timeout = intval($this->settings->get('ganuonglachanh-sonic.timeout', 30));
         $timeout = $timeout === 0 ? 30 : $timeout;
         $this->ingest  = new \Psonic\Ingest(new \Psonic\Client($host, $port, $timeout));
         $this->control = new \Psonic\Control(new \Psonic\Client($host, $port, $timeout));
@@ -45,10 +45,10 @@ class SonicEventSubscriber
         if ($event->post->type === "comment") {
             try {
                 $this->ingest->connect($this->password);
-                $this->ingest->push('postCollection', 'flarumBucket', $event->post->id,$event->post->content, $this->locale);
+                $this->ingest->push('postCollection', 'flarumBucket', $event->post->id, strip_tags($event->post->content), $this->locale);
                 $this->ingest->disconnect();
-            } catch (\Throwable $th) {
-
+            } catch (\Throwable $e) {
+                app('log')->error($e);
             }
         }
     }
@@ -58,11 +58,11 @@ class SonicEventSubscriber
         if ($event->post->type === "comment") {
             try {
                 $this->ingest->connect($this->password);
-                //$this->ingest->pop('postCollection', 'flarumBucket', $event->post->id,$event->post->content);
-                $this->ingest->push('postCollection', 'flarumBucket', $event->post->id,$event->post->content, $this->locale);
+                //$this->ingest->pop('postCollection', 'flarumBucket', $event->post->id, strip_tags($event->post->content));
+                $this->ingest->push('postCollection', 'flarumBucket', $event->post->id, strip_tags($event->post->content), $this->locale);
                 $this->ingest->disconnect();
-            } catch (\Throwable $th) {
-                
+            } catch (\Throwable $e) {
+                app('log')->error($e);
             }
         }
     }
@@ -71,10 +71,10 @@ class SonicEventSubscriber
         if ($event->post->type === "comment") {
             try {
                 $this->ingest->connect($this->password);
-                $this->ingest->pop('postCollection', 'flarumBucket', $event->post->id,$event->post->content);
+                $this->ingest->pop('postCollection', 'flarumBucket', $event->post->id, strip_tags($event->post->content));
                 $this->ingest->disconnect();
-            } catch (\Throwable $th) {
-
+            } catch (\Throwable $e) {
+                app('log')->error($e);
             }
         }
     }
@@ -83,10 +83,10 @@ class SonicEventSubscriber
         if ($event->post->type === "comment") {
             try {
                 $this->ingest->connect($this->password);
-                $this->ingest->pop('postCollection', 'flarumBucket', $event->post->id,$event->post->content);
+                $this->ingest->pop('postCollection', 'flarumBucket', $event->post->id, strip_tags($event->post->content));
                 $this->ingest->disconnect();
-            } catch (\Throwable $th) {
-
+            } catch (\Throwable $e) {
+                app('log')->error($e);
             }
         }
     }
@@ -95,10 +95,10 @@ class SonicEventSubscriber
         if ($event->post->type === "comment") {
             try {
                 $this->ingest->connect($this->password);
-                $this->ingest->push('postCollection', 'flarumBucket', $event->post->id,$event->post->content, $this->locale);
+                $this->ingest->push('postCollection', 'flarumBucket', $event->post->id, strip_tags($event->post->content), $this->locale);
                 $this->ingest->disconnect();
-            } catch (\Throwable $th) {
-
+            } catch (\Throwable $e) {
+                app('log')->error($e);
             }
         }
     }
