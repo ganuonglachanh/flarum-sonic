@@ -11,6 +11,12 @@ use Flarum\Settings\SettingsRepositoryInterface;
 
 class SonicEventSubscriber
 {
+    private SettingsRepositoryInterface $settings;
+    private string $locale;
+    private string $password;
+    private \Psonic\Ingest $ingest;
+    private \Psonic\Control $control;
+
     public function __construct(SettingsRepositoryInterface $settings)
     {
         $this->settings = $settings;
