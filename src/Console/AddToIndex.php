@@ -14,6 +14,7 @@ class AddToIndex extends AbstractCommand
 {
     protected $container;
     protected $database;
+    protected SettingsRepositoryInterface $settings;
 
     public function __construct(Container $container, SettingsRepositoryInterface $settings)
     {
