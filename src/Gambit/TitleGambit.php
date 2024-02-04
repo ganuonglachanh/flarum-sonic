@@ -44,7 +44,7 @@ class TitleGambit implements GambitInterface
         array_walk_recursive($postIdsArr,function($v) use (&$postIds){ $postIds[] = $v; }); // flatten array
         $subquery = Post::whereVisibleTo($search->getActor())
             ->select(['id as most_relevant_post_id','discussion_id'])
-            ->whereIn('id', $postIds);
+            ->whereIn('posts.id', $postIds);
 
         $query
             ->addSelect('posts_ft.most_relevant_post_id')
@@ -58,8 +58,8 @@ class TitleGambit implements GambitInterface
             ->addBinding($subquery->getBindings(), 'join');
 
 
-        $search->getQuery()->whereIn('id', $discussionIds);
+        $search->getQuery()->whereIn('discussions.id', $discussionIds);
         //$search->setDefaultSort(['id' => $discussionIds]);
-        $search->setDefaultSort(['id' => 'desc']);
+        $search->setDefaultSort(['discussions.id' => 'desc']);
     }
 }
